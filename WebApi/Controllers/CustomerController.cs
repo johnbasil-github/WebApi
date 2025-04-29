@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using WebApi.Entity.Data;
 using WebApi.Entity.Models;
+using WebApi.Services.Repository;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -13,53 +14,56 @@ namespace WebApi.Controllers
     [ApiController]
     public class CustomerController : ControllerBase
     {
-        private ApplicationDbContext _context;
-        public CustomerController(ApplicationDbContext context)
+
+        private ICustomerRepository _customerRepository;
+        public CustomerController(ICustomerRepository repository)
         {
-            _context = context;
+            _customerRepository = repository;
         }
 
-
         // GET: api/<CustomerController>
-        [HttpGet]
-        public async Task<IEnumerable<Customers>> Get()
+        [HttpGet("GetAllCustomers")]
+        //[Route("GetALlEmployees")]   we can also give like this, but we use above method, adding in httpmethod 
+        public async Task<IActionResult> GetAllCustomers()
         {
-            return await _context.Customers.ToListAsync();
+            return Ok(await _customerRepository.GetAllCustomersAsync());
         }
 
         // GET api/<CustomerController>/5
-        [HttpGet("{id}")]
-        public async Task<Customers> Get(int id)
+        [HttpGet("GetCustomerById")]
+        public async Task<IActionResult> GetCustomerById(int id)
         {
-            return await _context.Customers.FindAsync(id);
+            return Ok(await _customerRepository.GetCustomerByIdAsync(id));
         }
 
         // POST api/<CustomerController>
-        [HttpPost]
-        public async Task Post([FromBody] Customers customer)
+        [HttpPost("AddCustomer")]
+        public async Task<IActionResult> AddCustomer([FromBody] Customers customer)
         {
-            _context.Customers.Add(customer);
-            await _context.SaveChangesAsync();
+            await _customerRepository.AddCustomerAsync(customer);
+
+            return Ok();
         }
 
         // PUT api/<CustomerController>/5
-        [HttpPut("{id}")]
-        public async Task Put(int id, [FromBody] Customers customer)
+        [HttpPut("UpdateCustomer")]
+        public async Task<IActionResult> UpdateCustomer(int id, [FromBody] Customers customer)
         {
+            if (customer == null)
+            {
+                return BadRequest("No content from the request");
+            }
 
-            _context.Customers.Update(customer);
-            await _context.SaveChangesAsync();
-
+            await _customerRepository.UpdateCustomerAsync(id, customer);
+            return Ok();
         }
 
         // DELETE api/<CustomerController>/5
-        [HttpDelete("{id}")]
-        public async Task Delete(int id)
+        [HttpDelete("DeleteEmployee")]
+        public async Task<IActionResult> DeleteEmployee(int id)
         {
-            var person = _context.Customers.Find(id);
-
-            _context.Customers.Remove(person);
-            await _context.SaveChangesAsync();
+            await _customerRepository.DeleteCustomerAsync(id);
+            return Ok();
         }
     }
 }

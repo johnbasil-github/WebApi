@@ -15,6 +15,8 @@ namespace WebApi.Entity.Data
         {
         }
 
-        public DbSet<Customers> Customers { get; set; } 
+        public DbSet<Customers> Customers { get; set; }
+
+        public DbSet<Orderss> Orderss { get; set; }
     }
 }

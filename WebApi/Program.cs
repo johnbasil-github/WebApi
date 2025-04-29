@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using WebApi.Entity.Data;
+using WebApi.Services.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +17,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     var connStr = builder.Configuration.GetConnectionString("DefaultConnection");
     options.UseSqlServer(connStr);
 });
+
+builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+
 
 var app = builder.Build();
 
