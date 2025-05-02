@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using WebApi.Entity.Data;
+using WebApi.Entity.Ḍto;
 using WebApi.Entity.Models;
 
 namespace WebApi.Services.Repository
@@ -17,9 +19,25 @@ namespace WebApi.Services.Repository
             _context = context;
         }
 
-        public async Task<List<Customers>> GetAllCustomersAsync()
+        public async Task<List<CustomerResponseDto>> GetAllCustomersAsync()
         {
-              return await _context.Customers.ToListAsync();
+            var customers = await (from cust  in _context.Customers
+                                   join ord in _context.Orderss
+                                   on cust.CustomerId equals ord.CustId
+                                   select new CustomerResponseDto
+                                   {
+                                       CustomerId = cust.CustomerId,
+                                       CustomerName = cust.CustomerName,
+                                       OrderId = ord.OrderId,
+                                       ProductName = ord.ProductName,
+                                       Qty = ord.Qty,
+                                       Total = ord.Total,
+                                       TotalPrice = ord.TotalPrice,
+                                       
+                                   }).ToListAsync();
+              //return await _context.Customers.ToListAsync();
+
+            return customers;
         }
 
         public async Task<Customers?> GetCustomerByIdAsync(int id)
@@ -46,5 +64,7 @@ namespace WebApi.Services.Repository
             _context.Customers.Remove(person);
             await _context.SaveChangesAsync();
         }
+
+      
     }
 }
