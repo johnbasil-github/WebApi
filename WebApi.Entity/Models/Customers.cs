@@ -23,6 +23,6 @@ namespace WebApi.Entity.Models
         public string? Location { get; set; }
 
 
-        //public List<Orderss> ordersses { get; set; }
+        public List<Orderss> ordersses { get; set; }
     }
 }

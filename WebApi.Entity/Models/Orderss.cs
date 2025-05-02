@@ -25,7 +25,7 @@ namespace WebApi.Entity.Models
         public int TotalPrice { get; set; }
 
         public int CustId { get; set; }
-        //[ForeignKey("CustId")]
-        //public Customers customers { get; set; }
+        [ForeignKey("CustId")]
+        public Customers customers { get; set; }
     }
 }

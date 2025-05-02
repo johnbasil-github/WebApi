@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApi.Entity.Data;
 using WebApi.Entity.Models;
@@ -29,28 +30,40 @@ namespace WebApi.Controllers
         }
 
         // GET api/<OrderContoller>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet("GetOrderById")]
+        public async Task<IActionResult> GetOrderById(int id)
         {
-            return "value";
+            return Ok(await _orderRepository.GetOrderByIdAsync(id));
         }
 
         // POST api/<OrderContoller>
-        [HttpPost]
-        public void Post([FromBody] string value)
+        [HttpPost("Addorder")]
+        public async Task<IActionResult> Addorder([FromBody] Orderss orderss)
         {
+            await _orderRepository.AddorderAsync(orderss);
+
+            return Ok();
         }
 
         // PUT api/<OrderContoller>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut("UpdateOrder")]
+        public async Task<IActionResult> UpdateOrder(int id, [FromBody] Orderss orderss)
         {
+            if (orderss == null)
+            {
+                return BadRequest("No content from the request");
+            }
+
+            await _orderRepository.UpdateOrderAsync(id, orderss);
+            return Ok();
         }
 
         // DELETE api/<OrderContoller>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpDelete("DeleteOrder")]
+        public async Task<IActionResult> DeleteOrder(int id)
         {
+            await _orderRepository.DeleteOrderAsync(id);
+            return Ok();
         }
     }
 }
