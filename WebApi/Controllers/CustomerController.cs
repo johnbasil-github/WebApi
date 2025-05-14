@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
+using Microsoft.Extensions.Logging;
 using WebApi.Entity.Data;
 using WebApi.Entity.Models;
 using WebApi.Services.Repository;
@@ -16,9 +17,12 @@ namespace WebApi.Controllers
     {
 
         private ICustomerRepository _customerRepository;
-        public CustomerController(ICustomerRepository repository)
+
+        private ILogger<CustomerController> _logger;
+        public CustomerController(ICustomerRepository repository,ILogger<CustomerController> logger)
         {
             _customerRepository = repository;
+            _logger = logger;
         }
 
         // GET: api/<CustomerController>
@@ -26,6 +30,7 @@ namespace WebApi.Controllers
         //[Route("GetALlEmployees")]   we can also give like this, but we use above method, adding in httpmethod 
         public async Task<IActionResult> GetAllCustomers()
         {
+            _logger.LogInformation("Entered on GEtAllCustomers");
             return Ok(await _customerRepository.GetAllCustomersAsync());
         }
 
